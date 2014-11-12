@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"os/exec"
 	"testing"
@@ -56,6 +57,9 @@ func TestJitterArgIsDelta(t *testing.T) {
 // actually sleeps for a random number of seconds, so even with one minute of
 // jitter cronwrap will sleep anywhere from 0-59 seconds.
 func TestJitterIsConsistent(t *testing.T) {
+	// FIXME: It would speed up the test suite considerably to run all three tests
+	// simultaneously in goroutines and compare the results
+
 	// Time one run
 	start := time.Now()
 	err := exec.Command("go", "run", "cronwrap.go", "--jitter", "1m", "true").Run()
@@ -66,6 +70,7 @@ func TestJitterIsConsistent(t *testing.T) {
 	}
 
 	// Now verify that a few more runs are within one second of the same delay
+	allowed_diff := 2
 	for i := 1; i <= 2; i++ {
 		start := time.Now()
 		err := exec.Command("go", "run", "cronwrap.go", "--jitter", "1m", "true").Run()
@@ -74,8 +79,9 @@ func TestJitterIsConsistent(t *testing.T) {
 		if err != nil {
 			t.FailNow()
 		}
-		if math.Abs(test_elapsed.Seconds()-elapsed.Seconds()) > 1 {
-			t.Fail()
+		diff := math.Abs(test_elapsed.Seconds() - elapsed.Seconds())
+		if diff > float64(allowed_diff) {
+			t.Error(fmt.Sprintf("Expected diff <= %d, was %f", allowed_diff, diff))
 		}
 	}
 }
