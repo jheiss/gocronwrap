@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# This is a test program used by the test suite.  It takes a single argument
+# of a filename.  If that file contains the string 'succeed' then this command
+# will exit with a 0 status.  If the file contains the string 'fail' then this
+# command will exit with a 1 status.
+#
+# The test suite needs a command that can be made to succeed or fail as needed
+# without changing the command line arguments (since cronwrap identifies
+# commands by the hash of their name and arguments).
+
+trigger=`head -1 $1`
+if [ "$trigger" = "succeed" ]; then
+  printf "tester is succeeding\n"
+  exit 0
+elif [ "$trigger" = "fail" ]; then
+  printf "tester is failing\n"
+  exit 1
+else
+  printf "tester input file has unrecognized content '$trigger'\n"
+  exit 5;
+fi
