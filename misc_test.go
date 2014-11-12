@@ -38,3 +38,15 @@ func TestHelp(t *testing.T) {
 		t.Error("Too many help lines")
 	}
 }
+
+func TestCommandRequired(t *testing.T) {
+	out, err := exec.Command("go", "run", "cronwrap.go").CombinedOutput()
+	if err == nil {
+		t.Error("Did not exit with error when no command specified")
+	}
+	lines := strings.Split(string(out), "\n")
+
+	if !strings.HasPrefix(lines[0], "Error, must specify a command") {
+		t.Error("Did not provide appropriate message when no command specified")
+	}
+}

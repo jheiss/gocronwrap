@@ -42,9 +42,14 @@ func main() {
 
 	// flag.Args() has all of the remaining command line arguments, which will be
 	// the job command and its arguments
+	if len(flag.Args()) == 0 {
+		fmt.Fprintf(os.Stderr, "Error, must specify a command\n\n")
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	if suppress < 0 {
-		fmt.Printf("Error: suppress should be a positive integer\n\n")
+		fmt.Fprintf(os.Stderr, "Error: suppress should be a positive integer\n\n")
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -138,7 +143,7 @@ func main() {
 		}
 		err = syscall.Flock(int(pidfile.Fd()), syscall.LOCK_EX|syscall.LOCK_NB)
 		if err != nil {
-			fmt.Printf("Job is already running\n")
+			fmt.Fprintf(os.Stderr, "Job is already running\n")
 			os.Exit(1)
 		}
 		if debug {
@@ -315,7 +320,7 @@ func check(e error) {
 		if debug {
 			panic(e)
 		} else {
-			fmt.Println(e)
+			fmt.Fprintln(os.Stderr, e)
 			os.Exit(1)
 		}
 	}
