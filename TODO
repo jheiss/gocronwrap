@@ -3,5 +3,7 @@ Extract man page from perl version
 A variant of the overlap feature I'd like is an option to kill the older job
 on the assumption that it is stuck. In this mode of operation cronwrap should
 attempt to kill the old job, then check to see if it actually exited. If not
-abort, if so proceed with starting a new instance of the job.
+abort, if so proceed with starting a new instance of the job.  However
+there's some good commentary on this page about why that is hard to do
+correctly:  http://unixwiz.net/tools/lockrun.html
 
