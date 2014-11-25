@@ -281,10 +281,17 @@ func main() {
 	} else {
 		// Get existing failcount for this job and increment by one
 		oldcount := 0
+		if debug {
+			fmt.Printf("Reading old failure count\n")
+		}
 		oldcountbytes, err := ioutil.ReadFile(failcountfilename)
-		check(err)
-		oldcountstring := string(oldcountbytes)
-		_, _ = fmt.Sscanf(strings.TrimSpace(oldcountstring), "%d", &oldcount)
+		if err == nil {
+			oldcountstring := string(oldcountbytes)
+			_, _ = fmt.Sscanf(strings.TrimSpace(oldcountstring), "%d", &oldcount)
+			if debug {
+				fmt.Printf("Old failure count is %d\n", oldcount)
+			}
+		}
 		failcount = oldcount + 1
 		if debug {
 			fmt.Printf("Failure count for this job is %d\n", failcount)
